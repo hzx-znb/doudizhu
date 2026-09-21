@@ -7,8 +7,8 @@ on:
 
 jobs:
   build-android:
-    runs-on: ubuntu-latest
-    timeout-minutes: 90
+    runs-on: ubuntu-22.04   # 旧版工具链在 22.04 上更稳
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -22,13 +22,14 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y git zip unzip openjdk-17-jdk autoconf libtool \
-            pkg-config zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev \
-            automake autopoint gettext libltdl-dev build-essential
+            pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 \
+            cmake libffi-dev libssl-dev automake autopoint gettext libltdl-dev \
+            build-essential
 
       - name: Install Buildozer
         run: |
           python -m pip install --upgrade pip
-          pip install buildozer "cython<3"
+          pip install buildozer==1.5.0 "cython<3"
 
       - name: Build APK
         run: buildozer -v android debug
@@ -38,3 +39,4 @@ jobs:
         with:
           name: doudizhu-apk
           path: bin/*.apk
+
